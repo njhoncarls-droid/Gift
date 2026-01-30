@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Special Birthday Surprise 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family: "Comic Sans MS", cursive;
+  background: linear-gradient(to bottom,#b3e5fc,#e1f5fe);
+  text-align:center;
+  overflow:hidden;
+  color:#01579b;
+}
+.page{
+  display:none;
+  padding:25px;
+  min-height:100vh;
+  box-sizing:border-box;
+}
+.active{display:block;}
+h1{font-size:28px;}
+p{font-size:18px;line-height:1.6;}
+input,button{
+  padding:14px 22px;
+  font-size:16px;
+  border:none;
+  border-radius:20px;
+}
+button{
+  background:#039be5;
+  color:white;
+  margin-top:15px;
+  cursor:pointer;
+}
+button:active{transform:scale(0.95);}
+
+/* Cake */
+.cake{
+  font-size:120px;
+  margin:30px auto;
+  animation:bounce 1s infinite alternate;
+}
+@keyframes bounce{
+  from{transform:translateY(0);}
+  to{transform:translateY(-10px);}
+}
+
+/* Pictures */
+img{
+  width:90%;
+  max-width:320px;
+  border-radius:20px;
+  margin-top:15px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+.pic-row{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+/* Heart Text */
+#heartText{
+  font-size:50px;
+  color:#ff4081;
+  font-weight:bold;
+  animation:beat 1s infinite;
+  margin-top:50px;
+}
+@keyframes beat{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.2);}
+}
+
+/* Floating hearts */
+.heart{
+  position:fixed;
+  bottom:-20px;
+  font-size:22px;
+  animation:float 6s linear forwards;
+  color:#ff4081;
+}
+@keyframes float{
+  0%{transform:translateY(0) scale(1);opacity:1;}
+  100%{transform:translateY(-120vh) scale(1.5);opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<audio id="music" src="birthday_song.mp3" loop></audio>
+
+<!-- PAGE 1: Name -->
+<div class="page active" id="page1">
+  <h1>Hi et 💌</h1>
+  <p>Before you enter… what’s your name?</p>
+  <input type="text" id="nameInput" placeholder="Enter your name">
+  <br>
+  <button onclick="checkName()">Enter 🎀</button>
+  <p id="error" style="color:red;"></p>
+</div>
+
+<!-- PAGE 2: Typing Sweet Messages -->
+<div class="page" id="page2">
+  <h1>Happy Birthday et 🎉💖</h1>
+  <p id="message"></p>
+  <button onclick="nextPage('page3')">Next Surprise 📸</button>
+</div>
+
+<!-- PAGE 3: Pictures -->
+<div class="page" id="page3">
+  <h2>Some moments I treasure 💕</h2>
+  <div class="pic-row">
+    <img src="pic1.jpeg" alt="Moment 1">
+    <img src="pic2.jpeg" alt="Moment 2">
+    <img src="pic3.jpeg" alt="Moment 3">
+    <img src="pic4.jpeg" alt="Moment 4">
+  </div>
+  <button onclick="nextPage('pageCake')">Blow the Cake 🎂</button>
+</div>
+
+<!-- PAGE 4: Fancy Cake -->
+<div class="page" id="pageCake">
+  <h2>Make a wish 🎂✨</h2>
+  <p>Blow the candles!</p>
+  <div class="cake">🕯️🎂</div>
+  <button onclick="blowCake()">Blow Candles 💨</button>
+</div>
+
+<!-- PAGE 5: Heart Beat Text -->
+<div class="page" id="loveSlidePage">
+  <div id="heartText">I LOVE YOU KLING ❤️</div>
+  <button onclick="nextPage('pageAsk')">Next 💌</button>
+</div>
+
+<!-- PAGE 6: Will You Be My Girlfriend -->
+<div class="page" id="pageAsk">
+  <h2>Since it’s your birthday… I want to ask you something....Ayaw ka pressure kay dugay da mo ngini na assignment hahahaha 😳💖</h2>
+  <p>Will you be my girlfriend?</p>
+  <button onclick="sendAnswer('YES')">YES 💗</button>
+  <button id="noBtn" onmouseover="moveNo()" onclick="sendAnswer('NO')">NO 🙈</button>
+</div>
+
+<!-- PAGE 7: Thank You / Consolation -->
+<div class="page" id="page5">
+  <h2 id="thankTitle"></h2>
+  <p id="thankMessage"></p>
+  <p><strong>paki screenshot and isend sa messenger ko hahaha 😏💖</strong></p>
+</div>
+
+<script>
+const validNames = ["klera Mae Enriquez","Klera Mae Enriquez","kling","Kling","kling kling","kling²","bibi","kle","klera mae","klera","Klera"];
+const sweetMessageLines=[
+"Happy Birthday to the most special person in my world 🎉💖",
+"Thank you kling for making my days brighter and my smiles wider.",
+"You’re cute, funny, and somehow you make everything feel lighter just by being you. Panindigan mo gayud ngini et hahaha😆✨",
+"I don’t have fancy gifts yet, but I made this little world for you — because you deserve something made with effort, time, and love . 💕",
+"Enjoy your day, your cake, and this tiny surprise… because you are my favorite plot twist. 💌",
+"Basta always take care kling kay ampingan pa takaw hahaha, adi lang ako if need mo, ayaw kaulaw et. Also, pasensya da if gabuhat ako sin-i, just wanna show you lang na you deserve to be treated right, deserve mo ng efforts, attention, and genuine love. You may not be perfect kling, but you're something special and unique. "
+];
+let msgIndex=0;
+
+function checkName(){
+  const input = document.getElementById("nameInput").value.toLowerCase().trim();
+  if(validNames.includes(input)){
+    document.getElementById("page1").classList.remove("active");
+    document.getElementById("page2").classList.add("active");
+    document.getElementById("music").play();
+    typeMessage();
+  } else {
+    document.getElementById("error").innerText = "Ay sorry… this surprise is only for someone special 💔";
+  }
+}
+
+function typeMessage(){
+  const msgEl = document.getElementById("message");
+  if(msgIndex < sweetMessageLines.length){
+    let line = sweetMessageLines[msgIndex];
+    let charIndex=0;
+    function typeChar(){
+      if(charIndex<line.length){
+        msgEl.innerHTML+=line.charAt(charIndex);
+        charIndex++;
+        setTimeout(typeChar,50);
+      } else{
+        msgEl.innerHTML+="<br><br>";
+        msgIndex++;
+        setTimeout(typeMessage,200);
+      }
+    }
+    typeChar();
+  }
+}
+
+function nextPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function blowCake(){
+  document.querySelector(".cake").innerHTML="🎂";
+  createFlyingHearts(20); // hearts when blowing candle
+  alert("Yay! You blew the candles 🎂💖 Make a wish!");
+  nextPage('loveSlidePage');
+}
+
+function sendAnswer(ans){
+  const title = document.getElementById("thankTitle");
+  const msg = document.getElementById("thankMessage");
+  if(ans==="YES"){
+    title.innerText = "Yayyyy!!! sureness! 😭💖 Thank you so much et!";
+    msg.innerText = "I love you 💖 I promise to always cherish and love you!";
+    createFlyingHearts(30); // hearts when YES
+  } else {
+    title.innerText = "It’s okay 🌷";
+    msg.innerText = "I’ll still treasure you et and wish you the happiest birthday! Thanks for being honest!";
+  }
+  nextPage('page5');
+}
+
+function moveNo(){
+  let x=Math.random()*200-100;
+  let y=Math.random()*200-100;
+  document.getElementById("noBtn").style.transform=`translate(${x}px,${y}px)`;
+}
+
+function hearts(){ // floating hearts continuous
+  setInterval(()=>{
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💙";
+    h.style.left=Math.random()*100+"vw";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),6000);
+  },300);
+}
+
+function createFlyingHearts(count){
+  for(let i=0;i<count;i++){
+    const heart=document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="💙";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.bottom="0px";
+    heart.style.animationDuration=(2+Math.random()*2)+"s";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),4000);
+  }
+}
+</script>
+
+</body>
+</html>
+
